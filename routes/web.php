@@ -14,3 +14,7 @@
 $router->get('/', function () use ($router) {
     return response()->json("El diablo anda suelto", 200);
 });
+
+$router->get('/products', function() {
+    return response()->json("Hello world", 200);
+});
