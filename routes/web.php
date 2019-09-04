@@ -12,5 +12,5 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return response()->json("El diablo anda suelto", 200);
 });
