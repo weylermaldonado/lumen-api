@@ -12,7 +12,7 @@
 */
 
 $router->get('/', function () use ($router) {
-    return response()->json("El diablo anda suelto", 200);
+    return response()->json("El diablo anda suelto 2", 200);
 });
 
 $router->get('/products', function() {
