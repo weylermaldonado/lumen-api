@@ -7,5 +7,5 @@
 
 ## To run a single test:
 ```bash
-./vendor/bin/phpunit tests/ProductTest.php --filter=testShouldCreateAProduc
+./vendor/bin/phpunit tests/ProductTest.php --filter={testname}
 ```
