@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Product;
 use Laravel\Lumen\Routing\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -29,6 +30,18 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $rules = [
+            'name' => 'required',
+            'price' => 'required|numeric|min:1',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) { 
+            return response()->json([
+                'errors' => [
+                        'code' => 'ERROR-1',
+                        'title' => 'UnprocessableEntity'
+                    ]], 422);
+        }
         $product = new Product();
         $product->name = $request->name;
         $product->price = $request->price;
@@ -59,6 +72,18 @@ class ProductController extends Controller
      */
     public function updateProductById(String $id, Request $request)
     {
+        $rules = [
+            'name' => 'required',
+            'price' => 'required|numeric|min:1',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) { 
+            return response()->json([
+                'errors' => [
+                        'code' => 'ERROR-1',
+                        'title' => 'UnprocessableEntity'
+                    ]], 422);
+        }
         $product = Product::find($id);
         if (!$product) { return response()->json('No records found', 404); }
         $product->name = $request->name;
@@ -75,7 +100,9 @@ class ProductController extends Controller
      */
     public function deleteProductById(String $id)
     {
-        $product = Product::destroy($id);
-        return response()->json('Product deleted', 200);
+        $product = Product::find($id);
+        if (!$product) { return response()->json('No records found', 404); }
+        Product::destroy($id);
+        return response()->status(204);
     }
 }
