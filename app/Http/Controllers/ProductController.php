@@ -85,7 +85,11 @@ class ProductController extends Controller
                     ]], 422);
         }
         $product = Product::find($id);
-        if (!$product) { return response()->json('No records found', 404); }
+        if (!$product) { return response()->json([
+            'errors' => [
+                    'code' => 'ERROR-2',
+                    'title' => 'NotFound'
+                ]], 404); }
         $product->name = $request->name;
         $product->price = $request->price;
         $product->save();
@@ -101,7 +105,11 @@ class ProductController extends Controller
     public function deleteProductById(String $id)
     {
         $product = Product::find($id);
-        if (!$product) { return response()->json('No records found', 404); }
+        if (!$product) { return response()->json([
+            'errors' => [
+                    'code' => 'ERROR-2',
+                    'title' => 'NotFound'
+                ]], 404); }
         Product::destroy($id);
         return response()->status(204);
     }
