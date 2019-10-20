@@ -6,6 +6,8 @@ use App\Product;
 use Laravel\Lumen\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\ProductResource as ProductResource;
+use App\Http\Resources\ProductCollection as ProductCollection;
 
 class ProductController extends Controller
 {
@@ -19,7 +21,9 @@ class ProductController extends Controller
     {
         $products = Product::all();
 
-        return response()->json($products, 200);
+        return response()->json([
+            'data' => ProductResource::collection($products),
+        ], 200);
     }
 
     /**
@@ -31,11 +35,15 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'name' => 'required',
-            'price' => 'required|numeric|min:1',
+            'data' => 'required',
+            'data.type' => 'required',
+            'data.attributes' => 'required',
+            'data.attributes.name' => 'required',
+            'data.attributes.price' => 'required|numeric|min:1',
         ];
         $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) { 
+        if ($validator->fails()) 
+        { 
             return response()->json([
                 'errors' => [
                         'code' => 'ERROR-1',
@@ -43,11 +51,11 @@ class ProductController extends Controller
                     ]], 422);
         }
         $product = new Product();
-        $product->name = $request->name;
-        $product->price = $request->price;
+        $product->name = $request['data']['attributes']['name'];
+        $product->price = $request['data']['attributes']['price'];
         $product->save();
 
-        return response()->json($product, 201);
+        return response()->json(new ProductResource($product), 201);
     }
 
     /**
@@ -59,8 +67,15 @@ class ProductController extends Controller
     public function getProductById(String $id)
     {
         $product = Product::find($id);
-        if (!$product) { return response()->json('No records found', 404); }
-        return response()->json($product, 200);
+        if (!$product)
+        { 
+            return response()->json([
+                'errors' => [
+                        'code' => 'ERROR-2',
+                        'title' => 'NotFound'
+                    ]], 404);
+        }
+        return response()->json(new ProductResource($product), 200);
     }
 
     /**
@@ -73,11 +88,15 @@ class ProductController extends Controller
     public function updateProductById(String $id, Request $request)
     {
         $rules = [
-            'name' => 'required',
-            'price' => 'required|numeric|min:1',
+            'data' => 'required',
+            'data.type' => 'required',
+            'data.attributes' => 'required',
+            'data.attributes.name' => 'required',
+            'data.attributes.price' => 'required|numeric|min:1',
         ];
         $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) { 
+        if ($validator->fails())
+        { 
             return response()->json([
                 'errors' => [
                         'code' => 'ERROR-1',
@@ -85,15 +104,18 @@ class ProductController extends Controller
                     ]], 422);
         }
         $product = Product::find($id);
-        if (!$product) { return response()->json([
-            'errors' => [
+        if (!$product) 
+        { 
+            return response()->json([
+                'errors' => [
                     'code' => 'ERROR-2',
                     'title' => 'NotFound'
-                ]], 404); }
-        $product->name = $request->name;
-        $product->price = $request->price;
+                ]], 404); 
+        }
+        $product->name = $request['data']['attributes']['name'];
+        $product->price = $request['data']['attributes']['price'];
         $product->save();
-        return response()->json($product, 200);
+        return response()->json(new ProductResource($product), 200);
     }
 
     /**
@@ -105,11 +127,14 @@ class ProductController extends Controller
     public function deleteProductById(String $id)
     {
         $product = Product::find($id);
-        if (!$product) { return response()->json([
-            'errors' => [
+        if (!$product) 
+        { 
+            return response()->json([
+                'errors' => [
                     'code' => 'ERROR-2',
                     'title' => 'NotFound'
-                ]], 404); }
+                ]], 404); 
+        }
         Product::destroy($id);
         return response()->status(204);
     }
