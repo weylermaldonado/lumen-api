@@ -21,8 +21,13 @@ class ProductTest extends TestCase
         // Arrange
         $faker = Faker::create();
         $product = [
-            "name" => $faker->word,
-            "price" => $faker->randomFloat(4, 1, 100),
+            "data" => [
+                "type" => 'products',
+                "attributes" => [
+                    "name" => $faker->word,
+                    "price" => $faker->randomFloat(4, 1, 100),
+                ]
+            ]
         ];
 
         // Act
@@ -30,10 +35,16 @@ class ProductTest extends TestCase
 
         //Assert
         $this->assertEquals(201, $response->status());
-        $this->seeJsonStructure([ '*' => [
+        $this->seeJsonStructure([ 'data' => [
+            'type',
             'id',
-            'name',
-            'price'
+            'attributes' => [
+                "name",
+                "price"
+            ],
+            "links" => [
+                "self"
+            ]
         ]
         ]);
     }
@@ -49,7 +60,12 @@ class ProductTest extends TestCase
         // Arrange
         $faker = Faker::create();
         $product = [
-            "price" => $faker->randomFloat(4, 1, 100),
+            "data" => [
+                "type" => 'products',
+                "attributes" => [
+                    "price" => $faker->randomFloat(4, 1, 100),
+                ]
+            ]
         ];
 
         // Act
@@ -76,7 +92,12 @@ class ProductTest extends TestCase
         // Arrange
         $faker = Faker::create();
         $product = [
-            "name" => $faker->word,
+            "data" => [
+                "type" => 'product',
+                "attributes" => [
+                    "name" => $faker->word,
+                ]
+            ]
         ];
 
         // Act
@@ -103,8 +124,13 @@ class ProductTest extends TestCase
         // Arrange
         $faker = Faker::create();
         $product = [
-            "name" => $faker->word,
-            "price" => $faker->word,
+            "data" => [
+                "type" => 'product',
+                "attributes" => [
+                    "name" => $faker->word,
+                    "price" => $faker->word,
+                ]
+            ]
         ];
 
         // Act
@@ -131,8 +157,13 @@ class ProductTest extends TestCase
         // Arrange
         $faker = Faker::create();
         $product = [
-            "name" => $faker->word,
-            "price" => $faker->randomFloat(4,-100, 0),
+            "data" => [
+                "type" => 'products',
+                "attributes" => [
+                    "name" => $faker->word,
+                    "price" => $faker->randomFloat(4, -100, 0),
+                ]
+            ]
         ];
 
         // Act
@@ -162,8 +193,13 @@ class ProductTest extends TestCase
         // Arrange
         $faker = Faker::create();
         $product = [
-            "name" => $faker->word,
-            "price" => $faker->randomFloat(4, 1, 100),
+            "data" => [
+                "type" => 'products',
+                "attributes" => [
+                    "name" => $faker->word,
+                    "price" => $faker->randomFloat(4, 1, 100),
+                ]
+            ]
         ];
 
         // Act
@@ -171,10 +207,16 @@ class ProductTest extends TestCase
 
         //Assert
         $this->assertEquals(200, $response->status());
-        $this->seeJsonStructure([ '*' => [
+        $this->seeJsonStructure([ 'data' => [
+            'type',
             'id',
-            'name',
-            'price'
+            'attributes' => [
+                "name",
+                "price"
+            ],
+            "links" => [
+                "self"
+            ]
         ]
         ]);
     }
@@ -193,8 +235,13 @@ class ProductTest extends TestCase
         // Arrange
         $faker = Faker::create();
         $product = [
-            "name" => $faker->word,
-            "price" => $faker->word,
+            "data" => [
+                "type" => 'products',
+                "attributes" => [
+                    "name" => $faker->word,
+                    "price" => $faker->word,
+                ]
+            ]
         ];
 
         // Act
@@ -223,8 +270,13 @@ class ProductTest extends TestCase
         // Arrange
         $faker = Faker::create();
         $product = [
-            "name" => $faker->word,
-            "price" => $faker->randomFloat(4, -100, 0),
+            "data" => [
+                "type" => 'products',
+                "attributes" => [
+                    "name" => $faker->word,
+                    "price" => $faker->randomFloat(4, -100, 0),
+                ]
+            ]
         ];
 
         // Act
@@ -253,8 +305,13 @@ class ProductTest extends TestCase
         // Arrange
         $faker = Faker::create();
         $product = [
-            "name" => $faker->word,
-            "price" => $faker->randomFloat(4,0, 100),
+            "data" => [
+                "type" => 'products',
+                "attributes" => [
+                    "name" => $faker->word,
+                    "price" => $faker->randomFloat(4, 1, 100),
+                ]
+            ]
         ];
 
         // Act
@@ -263,7 +320,10 @@ class ProductTest extends TestCase
         //Assert
         $this->assertEquals(404, $response->status());
         $this->seeJson([
-            'No records found'
+            'errors' => [
+                'code' => 'ERROR-2',
+                'title' => 'NotFound',
+            ]
         ]);
     }
 
@@ -284,10 +344,16 @@ class ProductTest extends TestCase
 
         //Assert
         $this->assertEquals(200, $response->status());
-        $this->seeJsonStructure([ '*' => [
+        $this->seeJsonStructure([ 'data' => [
+            'type',
             'id',
-            'name',
-            'price'
+            'attributes' => [
+                "name",
+                "price"
+            ],
+            "links" => [
+                "self"
+            ]
         ]
         ]);
     }
@@ -307,7 +373,12 @@ class ProductTest extends TestCase
 
         //Assert
         $this->assertEquals(404, $response->status());
-        $this->seeJson(['No records found']);
+        $this->seeJson([
+            'errors' => [
+                'code' => 'ERROR-2',
+                'title' => 'NotFound',
+            ]
+        ]);
     }
     // ------------------------------ Show all cases ----------------------------
     /**
@@ -323,12 +394,19 @@ class ProductTest extends TestCase
 
         //Assert
         $this->assertEquals(200, $response->status());
-        $this->seeJsonStructure([ '*' => [
-            'id',
-            'name',
-            'price'
-        ]
-        ]);
+        $this->seeJsonStructure([ 'data' => [[
+            'data' => [
+                'type',
+                'id',
+                'attributes' => [
+                    'name',
+                    'price'
+                ],
+                'links' => [
+                    'self'
+                ]
+            ]]
+            ]]);
     }
     /**
      * @ID LIST-2
@@ -343,7 +421,7 @@ class ProductTest extends TestCase
 
         //Assert
         $this->assertEquals(200, $response->status());
-        $this->seeJsonStructure([ '*' => [] ]);
+        $this->seeJsonStructure([ 'data' => [] ]);
     }
     // ------------------------------ Delete cases ------------------------------
     /**
@@ -355,7 +433,7 @@ class ProductTest extends TestCase
     public function testShouldDeleteAProduct()
     {
         // Arrange
-        $productId =  34;
+        $productId =  60;
 
         // Act
         $response = $this->call('DELETE', '/products/'.$productId);
@@ -379,6 +457,11 @@ class ProductTest extends TestCase
 
         //Assert
         $this->assertEquals(404, $response->status());
-        $this->seeJson(['No records found']);
+        $this->seeJson([
+            'errors' => [
+                'code' => 'ERROR-2',
+                'title' => 'NotFound',
+            ]
+        ]);
     }
 }

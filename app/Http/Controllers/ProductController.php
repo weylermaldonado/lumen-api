@@ -136,6 +136,6 @@ class ProductController extends Controller
                 ]], 404); 
         }
         Product::destroy($id);
-        return response()->status(204);
+        return response(null, 204);
     }
 }
