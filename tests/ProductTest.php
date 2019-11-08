@@ -2,6 +2,7 @@
 
 use Faker\Factory as Faker;
 use Tests\TestCase;
+use App\Product;
 
 define('PRODUCTTOGET', 6);
 define('PRODUCTTOEDIT', 20);
@@ -188,10 +189,13 @@ class ProductTest extends TestCase
     public function testShouldEditAProduct()
     {
         // Arrange
-        $productId = PRODUCTTOEDIT;
-
-        // Arrange
         $faker = Faker::create();
+        $new_product = new Product();
+        $new_product->name = $faker->word;
+        $new_product->price = $faker->randomFloat(4, 1, 100);
+        $new_product->save();
+        $productId = $new_product->id;
+
         $product = [
             "data" => [
                 "type" => 'products',
@@ -230,7 +234,12 @@ class ProductTest extends TestCase
     public function testShouldntEditAProductWithAStringAsPrice()
     {
         // Arrange
-        $productId = PRODUCTTOEDIT;
+        $faker = Faker::create();
+        $new_product = new Product();
+        $new_product->name = $faker->word;
+        $new_product->price = $faker->randomFloat(4, 1, 100);
+        $new_product->save();
+        $productId = $new_product->id;
 
         // Arrange
         $faker = Faker::create();
@@ -265,7 +274,12 @@ class ProductTest extends TestCase
     public function testShouldntEditAProductWithANegativePrice()
     {
         // Arrange
-        $productId = PRODUCTTOEDIT;
+        $faker = Faker::create();
+        $new_product = new Product();
+        $new_product->name = $faker->word;
+        $new_product->price = $faker->randomFloat(4, 1, 100);
+        $new_product->save();
+        $productId = $new_product->id;
 
         // Arrange
         $faker = Faker::create();
@@ -337,7 +351,12 @@ class ProductTest extends TestCase
     public function testShouldReturnAProduct()
     {
         // Arrange
-        $productId = PRODUCTTOGET;
+        $faker = Faker::create();
+        $new_product = new Product();
+        $new_product->name = $faker->word;
+        $new_product->price = $faker->randomFloat(4, 1, 100);
+        $new_product->save();
+        $productId = $new_product->id;
 
         // Act
         $response = $this->call('GET', '/products/'.$productId);
@@ -394,19 +413,17 @@ class ProductTest extends TestCase
 
         //Assert
         $this->assertEquals(200, $response->status());
-        $this->seeJsonStructure([ 'data' => [[
-            'data' => [
-                'type',
-                'id',
-                'attributes' => [
-                    'name',
-                    'price'
-                ],
-                'links' => [
-                    'self'
-                ]
-            ]]
-            ]]);
+        $this->seeJsonStructure([['data' => [
+            'type',
+            'id',
+            'attributes' => [
+                "name",
+                "price"
+            ],
+            "links" => [
+                "self"
+            ]
+        ]]]);
     }
     /**
      * @ID LIST-2
@@ -416,12 +433,15 @@ class ProductTest extends TestCase
      */
     public function testShouldReturnAnEmptyListProducts()
     {
+        // Arrange
+        Product::truncate();
+
         // Act
         $response = $this->call('GET', '/products');
 
         //Assert
         $this->assertEquals(200, $response->status());
-        $this->seeJsonStructure([ 'data' => [] ]);
+        $this->seeJsonStructure([ '*' => [] ]);
     }
     // ------------------------------ Delete cases ------------------------------
     /**
@@ -433,7 +453,12 @@ class ProductTest extends TestCase
     public function testShouldDeleteAProduct()
     {
         // Arrange
-        $productId =  60;
+        $faker = Faker::create();
+        $new_product = new Product();
+        $new_product->name = $faker->word;
+        $new_product->price = $faker->randomFloat(4, 1, 100);
+        $new_product->save();
+        $productId = $new_product->id;
 
         // Act
         $response = $this->call('DELETE', '/products/'.$productId);
@@ -450,7 +475,7 @@ class ProductTest extends TestCase
     public function testShouldntDeleteAnInexistentProduct()
     {
         // Arrange
-        $productId =  0;
+        $productId = 0;
 
         // Act
         $response = $this->call('DELETE', '/products/'.$productId);
